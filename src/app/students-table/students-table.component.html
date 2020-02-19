@@ -1,0 +1,49 @@
+<div class="mat-elevation-z8">
+
+  <mat-form-field>
+    <mat-label>Filter</mat-label>
+    <input matInput (keyup)="filterStudents($event)" placeholder="Student Name">
+  </mat-form-field>
+
+  <table mat-table class="full-width-table" matSort aria-label="Elements">
+    
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header >Name</th>
+      <td mat-cell *matCellDef="let row">{{row.name}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Therapies</th>
+      <td mat-cell *matCellDef="let row">{{row.therapies}}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="edit">
+      <th mat-header-cell *matHeaderCellDef>
+        <button mat-raised-button (click)="openStudentDialog('add', null)" color="accent">
+          Add Student <i class="fas fa-user ml-1"></i>
+          </button>  
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <button mat-icon-button color="primary"
+          (click)="openStudentDialog('edit', row.id)">
+          <i class="fas fa-edit"></i>
+        </button>
+
+        <button mat-icon-button color="warn" class="ml-2"
+          (click)="deleteStudent(row.id)">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+
+  <mat-paginator #paginator
+      [length]="dataSource?.data.length"
+      [pageIndex]="0"
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10]">
+  </mat-paginator>
+</div>

@@ -1,0 +1,52 @@
+<mat-card class="example-card">
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 text-center">
+        <h5> {{ title }} Student <i class="fas fa-user ml-1"></i></h5>
+        <mat-card-subtitle>Presence Learning</mat-card-subtitle>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 text-center">
+
+        <mat-card-content>
+          <mat-form-field appearance="fill">
+            <mat-label>Student Name</mat-label>
+            <input matInput [(ngModel)]="studentName" value="studentName">
+          </mat-form-field>
+
+          <section>
+            <mat-card-subtitle>Check Student Therapies:</mat-card-subtitle>
+
+            <mat-checkbox class="example-margin" [(ngModel)]="studentTherapies.speech">Speech</mat-checkbox>
+            <mat-checkbox class="example-margin" [(ngModel)]="studentTherapies.ocupational">Ocupational</mat-checkbox>
+            <mat-checkbox class="example-margin" [(ngModel)]="studentTherapies.behavioral">Behavioral</mat-checkbox>
+          </section>
+        </mat-card-content>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12 text-center">
+
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="saveChanges()">
+            SAVE
+          </button>
+          <button mat-raised-button color="warn" (click)="discardChanges()">
+            DISCARD
+          </button>
+        </mat-card-actions>
+
+      </div>
+    </div>
+  </div>
+
+</mat-card>
