@@ -1,0 +1,11 @@
+{
+  "targets": {
+    "presence-learning-225ac": {
+      "hosting": {
+        "Presence-Learning": [
+          "presence-learning-225ac"
+        ]
+      }
+    }
+  }
+}
