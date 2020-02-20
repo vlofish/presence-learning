@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { Observable, of as observableOf } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 import { IStudent } from './interfaces/istudent';
@@ -76,7 +76,7 @@ export class StudentsService {
     return ((error: HttpErrorResponse) => {
       console.error('Error with ' + operationName);
       console.error('Type of error ' + error.message);
-      return of(result);
+      return observableOf(result);
     });
   }
 

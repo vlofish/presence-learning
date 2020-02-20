@@ -6,9 +6,9 @@
   </mat-form-field>
 
   <table mat-table class="full-width-table" matSort aria-label="Elements">
-    
+
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header >Name</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
       <td mat-cell *matCellDef="let row">{{row.name}}</td>
     </ng-container>
 
@@ -21,16 +21,14 @@
       <th mat-header-cell *matHeaderCellDef>
         <button mat-raised-button (click)="openStudentDialog('add', null)" color="accent">
           Add Student <i class="fas fa-user ml-1"></i>
-          </button>  
+        </button>
       </th>
       <td mat-cell *matCellDef="let row">
-        <button mat-icon-button color="primary"
-          (click)="openStudentDialog('edit', row.id)">
+        <button mat-icon-button color="primary" (click)="openStudentDialog('edit', row.id)">
           <i class="fas fa-edit"></i>
         </button>
 
-        <button mat-icon-button color="warn" class="ml-2"
-          (click)="deleteStudent(row.id)">
+        <button mat-icon-button color="warn" class="ml-2" (click)="deleteStudent(row.id)">
           <i class="fas fa-trash-alt"></i>
         </button>
       </td>
@@ -40,10 +38,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 
-  <mat-paginator #paginator
-      [length]="dataSource?.data.length"
-      [pageIndex]="0"
-      [pageSize]="10"
-      [pageSizeOptions]="[5, 10]">
+  <mat-paginator #paginator [length]="dataSource?.data.length" [pageIndex]="0" [pageSize]="10"
+    [pageSizeOptions]="[5, 10]">
   </mat-paginator>
 </div>
