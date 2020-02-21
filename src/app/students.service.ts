@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Observable, of as observableOf } from 'rxjs';
+import { Observable, of as observableOf, BehaviorSubject } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
 
 import { IStudent } from './interfaces/istudent';
@@ -13,6 +13,8 @@ export class StudentsService {
   url = {
     students: 'api/students'
   };
+
+  public studentSvcState = new BehaviorSubject<string>('');
 
   httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -60,9 +62,17 @@ export class StudentsService {
    * @param student 
    */
   addStudent(student: IStudent): Observable<IStudent> {
+
+
     return this.http.post<IStudent>(this.url.students, student, this.httpOptions)
       .pipe(
-        tap((student) => console.log("Added student: " + student.id)),
+        tap((student) => {
+          if (student.id) {
+            this.studentSvcState.next('student-added');
+          } else {
+            this.studentSvcState.next('student-not-added');
+          }
+        }),
         catchError(this.handleError('addStudent', []))
       );
   }

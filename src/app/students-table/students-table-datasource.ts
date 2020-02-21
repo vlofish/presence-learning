@@ -1,19 +1,22 @@
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import {MatTableDataSource} from '@angular/material/table';
+
 import { map } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
 
 import { IStudent } from '../interfaces/istudent';
+import { StudentsService } from '../students.service';
 import { STUDENT_MOCK } from '../mocks/data/student-mock'
 
-import {MatTableDataSource} from '@angular/material/table';
 export class StudentsTableDataSource extends DataSource<IStudent> {
-  data: IStudent[] = STUDENT_MOCK;
+  data: IStudent[] = [];
   paginator: MatPaginator;
   sort: MatSort;
 
   constructor(
+    private studentSvc: StudentsService
   ) {
     super();
   }
@@ -22,7 +25,7 @@ export class StudentsTableDataSource extends DataSource<IStudent> {
    * @param filterValue 
    */
   filter(filterValue: string): Observable <IStudent[]> {
-    const matTblDataSrc = new MatTableDataSource(STUDENT_MOCK);
+    const matTblDataSrc = new MatTableDataSource(this.data);
     matTblDataSrc.filter = filterValue.trim().toLowerCase()
 
     return observableOf<IStudent[]>(matTblDataSrc.filteredData);
@@ -48,15 +51,20 @@ export class StudentsTableDataSource extends DataSource<IStudent> {
   }
 
   connect(): Observable<IStudent[]> {
+    const observableStudents = this.studentSvc.getStudents().pipe(map((students) => {
+      this.data = students;
+      this.getPagedData(this.getSortedData([...this.data]));
+    }))
+
     const dataMutations = [
-      observableOf(this.data),
+      observableStudents,
       this.paginator.page,
       this.sort.sortChange
     ];
 
     return merge(...dataMutations).pipe(map(() => {
       return this.getPagedData(this.getSortedData([...this.data]));
-    }));
+    })); 
   }
 
   /**
