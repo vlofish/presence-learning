@@ -3,6 +3,7 @@ import {MatBottomSheetRef, MAT_BOTTOM_SHEET_DATA} from '@angular/material/bottom
 
 import { StudentsService } from '../students.service';
 import { IStudent } from '../interfaces/istudent';
+import { IStudentData } from '../interfaces/istudent-data';
 
 @Component({
   selector: 'app-add-student-component',
@@ -11,12 +12,13 @@ import { IStudent } from '../interfaces/istudent';
 })
 export class AddStudentComponent implements OnInit {
   title: string;
-  studentName = '';
-  studentTherapies = { //An interface would work; not added for lack of time.
-    speech: false,
-    ocupational: false,
-    behavioral: false
+  originalStudentData: IStudentData = {
+    name: '',
+    speechTherapy: false,
+    ocupationalTherapy: false,
+    behavioralTherapy: false
   };
+  studentData: IStudentData = {...this.originalStudentData};
 
   constructor(
     private bottomSheetRef: MatBottomSheetRef<AddStudentComponent>,
@@ -29,28 +31,39 @@ export class AddStudentComponent implements OnInit {
   }
 
   /**
+   * Register a new student.
+   * A student can be registered without therapies, but not without a name.
+   * A randomId is generated for the student since no actual API is implemented.
+   * The therapies are gotten from a different function within this one.
    * 
+   * @param studentData The form data
    */
-  saveChanges(): void {
-    const randomId: number = Math.floor(Math.random() * 500) + 1;
-    const therapies: string[] = this.getStudentTherapies();
+  saveChanges(studentData: any): void {
+    const validStudent = (
+      studentData !== undefined && 
+      studentData !== null &&
+      studentData.name !== ''
+    );
 
-    if(this.studentName !== '') {
+    if(validStudent) {  
+      const randomId: number = Math.floor(Math.random() * 500) + 1;
+      const therapies: string[] = this.getStudentTherapies(studentData);
+
       const student: IStudent = {
         id: randomId.toString(),
-        name: this.studentName,
+        name: studentData.name,
         therapies: therapies
       };
   
       this.studentsSvc.addStudent(student).subscribe(student => {
-        const studentAdded = (
+        const isStudentAdded = (
           student.id !== undefined &&
           student.name !== undefined &&
           student.therapies !== undefined
         );
   
-        if(studentAdded) {
-          this.cleanAllFields();
+        if(isStudentAdded) {
+          this.cleanFormFields();
           this.bottomSheetRef.dismiss();
         }
       });
@@ -58,12 +71,16 @@ export class AddStudentComponent implements OnInit {
   }
 
   /**
-   * Close the bottom sheet and clean any data from the user
+   * Discard the changes by cleaning the data and close the sheet.
+   * Display in console the data that was goign to be stored just for fun.
    */
-  discardChanges(): void {
-    this.cleanAllFields();
+  discardChanges(studentData: any): void {
+    console.table(studentData);
+    this.cleanFormFields();
     this.bottomSheetRef.dismiss();
   }
+
+  //#region Private Functions
 
   private setStudentFunctionality(data) {
     if(data.action === 'add'){
@@ -89,32 +106,43 @@ export class AddStudentComponent implements OnInit {
     throw new Error("Method not implemented.");
   }
 
-
   /**
-   * Check therapies object. 
-   * Then add the therapies selected to an string array;
+   * Check therapies within the student data. 
+   * Add the valid (true) therapies selected to an array.
+   * 
+   * @param studentData The student data from the form.
+   * @returns Empty array when no therapies selected or array with therapies selected. 
    */
-  private getStudentTherapies(): string[] {
+  private getStudentTherapies(studentData: any): string[] {
     let therapies = [];
+    const validStudent = (studentData !== undefined && studentData !== null);
 
-    if(this.studentTherapies.speech) {
-      therapies.push('speech');
-    }
-    if(this.studentTherapies.ocupational) {
-      therapies.push('ocupational');
-    }
-    if(this.studentTherapies.behavioral) {
-      therapies.push('behavioral');
+    if(validStudent) {
+      if(studentData.speechTherapy) {
+        therapies.push('speech');
+      }
+      if(studentData.ocupationalTherapy) {
+        therapies.push('ocupational');
+      }
+      if(studentData.behavioralTherapy) {
+        therapies.push('behavioral');
+      }
     }
 
     return therapies;
   }
 
-  private cleanAllFields() {
-    this.studentName = '';
-    this.studentTherapies.behavioral = false;
-    this.studentTherapies.ocupational = false;
-    this.studentTherapies.speech = false;
+  /**
+   * Resets the fields within the form.
+   * Does it by resetting the studentData object
+   */
+  private cleanFormFields() {
+    this.studentData.name = '';
+    this.studentData.speechTherapy = false;
+    this.studentData.ocupationalTherapy = false;
+    this.studentData.behavioralTherapy = false;
   }
+
+  //#endregion Private Functions
   
 }
